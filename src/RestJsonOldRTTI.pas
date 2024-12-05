@@ -11,7 +11,8 @@ type
   public
     class function Marshal(entity: TObject): string;
 
-    class function UnMarshal(AClassType: TClass; AJsonText: String): TObject;
+    class function UnMarshal(AClassType: TClass; AJsonText: String): TObject; overload;
+    class function UnMarshal(entity: TObject; AJsonText: String): TObject; overload;
   end;
 
 implementation
@@ -26,6 +27,11 @@ end;
 class function TJsonUtilOldRTTI.UnMarshal(AClassType: TClass; AJsonText: String): TObject;
 begin
   Result := TOldRttiUnMarshal.FromJson(AClassType, AJsonText);
+end;
+
+class function TJsonUtilOldRTTI.UnMarshal(entity: TObject; AJsonText: String): TObject;
+begin
+  Result := TOldRttiUnMarshal.FromJson(entity, AJsonText);
 end;
 
 end.

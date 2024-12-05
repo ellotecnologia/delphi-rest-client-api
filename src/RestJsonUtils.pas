@@ -25,10 +25,12 @@ type
     class function UnMarshal<T>(AJsonText: String): T;overload;
     {$ENDIF}
     class function UnMarshal(AClassType: TClass; AJsonText: String): TObject;overload;
+    class function UnMarshal(entity: TObject; AJsonText: String): TObject;overload;
   end;
 
 function JavaToDelphiDateTime(const dt: int64): TDateTime;
 function DelphiToJavaDateTime(const dt: TDateTime): int64;
+function DelphiToJsonDateTime(const dt: TDateTime): String;
 function ISO8601DateToJavaDateTime(const str: String; var ms: Int64): Boolean;
 function ISO8601DateToDelphiDateTime(const str: string; var dt: TDateTime): Boolean;
 function DelphiDateTimeToISO8601Date(dt: TDateTime): string;
@@ -305,7 +307,13 @@ begin
   TzSpecificLocalTimeToSystemTime(nil, @t, @t);
   Result := Round((SystemTimeToDateTime(t) - 25569) * 86400000)
 end;
+
 {$ENDIF}
+
+function DelphiToJsonDateTime(const dt: TDateTime): String;
+begin
+   Result := FormatDateTime('yyyy-mm-dd', dt) + 'T' + FormatDateTime('hh:nn:ss.zzz', dt) + 'Z';
+end;
 
 {$IFDEF UNIX}
 function GetTimeBias: integer;
@@ -383,7 +391,9 @@ var
 label
   error;
 begin
+  {$WARN SUSPICIOUS_TYPECAST OFF}
   p := PSOChar(str);
+  {$WARN SUSPICIOUS_TYPECAST ON}
   sep := perhaps;
   state := stStart;
   pos := 0;
@@ -1034,6 +1044,11 @@ begin
 {$ELSE}
   Result := TJsonUtilOldRTTI.UnMarshal(AClassType, AJsonText);
 {$ENDIF}
+end;
+
+class function TJsonUtil.UnMarshal(entity: TObject; AJsonText: String): TObject;
+begin
+  Result := TJsonUtilOldRTTI.UnMarshal(entity, AJsonText);
 end;
 
 {$IFDEF SUPPORTS_GENERICS}

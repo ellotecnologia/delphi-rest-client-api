@@ -20,7 +20,7 @@ type
 
 implementation
 
-uses Variants, JsonListAdapter, SysUtils, RestJsonUtils;
+uses Variants, JsonListAdapter, SysUtils, RestJsonUtils{, ExlUnicode};
 
 { TOldRttiMarshal }
 
@@ -57,6 +57,8 @@ begin
   else
   begin
     vTypeInfo := AObject.ClassInfo;
+
+    //RemoveDiacritics(AObject);
 
     if vTypeInfo = nil then
     begin
@@ -115,7 +117,7 @@ end;
 function TOldRttiMarshal.ToFloat(AObject: TObject; APropInfo: PPropInfo): ISuperObject;
 begin
   if APropInfo^.PropType^ = System.TypeInfo(TDateTime) then
-    Result := TSuperObject.Create(DelphiToJavaDateTime(GetFloatProp(AObject, APropInfo)))
+    Result := TSuperObject.Create(DelphiToJsonDateTime(GetFloatProp(AObject, APropInfo)))
   else
     Result := TSuperObject.Create(GetFloatProp(AObject, APropInfo));
 end;

@@ -7,6 +7,7 @@ uses TypInfo, SuperObject, Variants, SysUtils, Math, Classes;
 type
   TOldRttiUnMarshal = class
   private
+    function FromObject(entity: TObject; AJSONValue: ISuperObject): TObject;
     function FromClass(AClassType: TClass; AJSONValue: ISuperObject): TObject;
     function FromList(AClassType: TClass; APropInfo: PPropInfo; const AJSONValue: ISuperObject): TList;overload;
     function FromList(AClassType, AItemClassType: TClass; const AJSONValue: ISuperObject): TList;overload;
@@ -17,8 +18,10 @@ type
     function FromChar(APropInfo: PPropInfo; const AJSONValue: ISuperObject): Variant;
     function FromWideChar(APropInfo: PPropInfo; const AJSONValue: ISuperObject): Variant;
   public
-    class function FromJson(AClassType: TClass; const AJson: string): TObject;
-    class function FromJsonArray(AClassType, AItemClassType: TClass; const AJson: string): TObject;    
+    class function FromJson(AClassType: TClass; const AJson: string): TObject; overload;
+    class function FromJson(entity: TObject; const AJson: string): TObject; overload;
+
+    class function FromJsonArray(AClassType, AItemClassType: TClass; const AJson: string): TObject;
   end;
 
 implementation
@@ -37,6 +40,12 @@ begin
 end;
 
 function TOldRttiUnMarshal.FromClass(AClassType: TClass; AJSONValue: ISuperObject): TObject;
+begin
+   Result := AClassType.Create;
+   Result := FromObject(Result, AJSONValue);
+end;
+
+function TOldRttiUnMarshal.FromObject(entity: TObject; AJSONValue: ISuperObject): TObject;
 var
   i: Integer;
   vTypeInfo: PTypeInfo;
@@ -53,9 +62,9 @@ begin
 
   case ObjectGetType(AJSONValue) of
     stObject: begin
-                Result := AClassType.Create;
+                Result := entity;
                 try
-                  vTypeInfo := AClassType.ClassInfo;
+                  vTypeInfo := entity.ClassInfo;
                   vTypeData := GetTypeData(vTypeInfo);
 
                   New(vPropList);
@@ -141,7 +150,7 @@ begin
                 end;
               end;
     stArray: begin
-               Result := FromList(AClassType, PPropInfo(nil), AJSONValue);
+//               Result := FromList(AClassType, PPropInfo(nil), AJSONValue);
              end;
   end;
 end;
@@ -235,6 +244,26 @@ begin
       raise EJsonInvalidSyntax.CreateFmt('Invalid json: "%s"', [AJson]);
 
     Result := vUnMarshal.FromClass(AClassType, vJsonObject);
+  finally
+    vUnMarshal.Free;
+  end;
+end;
+
+class function TOldRttiUnMarshal.FromJson(entity: TObject; const AJson: string): TObject;
+var
+  vUnMarshal: TOldRttiUnMarshal;
+  vJsonObject: ISuperObject;
+begin
+  Result := nil;
+
+  vUnMarshal := TOldRttiUnMarshal.Create;
+  try
+    vJsonObject := SO(AJson);
+
+    if vJsonObject = nil then
+      raise EJsonInvalidSyntax.CreateFmt('Invalid json: "%s"', [AJson]);
+
+    Result := vUnMarshal.FromObject(entity, vJsonObject);
   finally
     vUnMarshal.Free;
   end;

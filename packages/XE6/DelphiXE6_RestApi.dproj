@@ -2,7 +2,7 @@
     <PropertyGroup>
         <ProjectGuid>{8431842E-843D-4F8F-87E6-7360403375BD}</ProjectGuid>
         <MainSource>DelphiXE6_RestApi.dpk</MainSource>
-        <ProjectVersion>15.4</ProjectVersion>
+        <ProjectVersion>19.2</ProjectVersion>
         <Base>True</Base>
         <Config Condition="'$(Config)'==''">Debug</Config>
         <AppType>Package</AppType>
@@ -70,12 +70,14 @@
         <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win64)'!=''">
         <DCC_Namespace>System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;$(DCC_Namespace)</DCC_Namespace>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_UsePackage>vcl;dsnap;$(DCC_UsePackage)</DCC_UsePackage>
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
+        <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1)'!=''">
         <DCC_UnitSearchPath>..\..\d$(BDSLIB)\$(Platform)\release;..\..\src;..\..\lib;..\..\lib\SuperObject;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
@@ -110,6 +112,7 @@
         <DCCReference Include="IndyProtocols.dcp"/>
         <DCCReference Include="IndyCore.dcp"/>
         <DCCReference Include="DbxCommonDriver.dcp"/>
+        <DCCReference Include="soaprtl.dcp"/>
         <DCCReference Include="..\..\src\DataSetUtils.pas"/>
         <DCCReference Include="..\..\src\HttpConnection.pas"/>
         <DCCReference Include="..\..\src\HttpConnectionFactory.pas"/>

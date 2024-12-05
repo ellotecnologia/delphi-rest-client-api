@@ -35,7 +35,8 @@ requires
   IndySystem,
   IndyProtocols,
   IndyCore,
-  DbxCommonDriver;
+  DbxCommonDriver,
+  soaprtl;
 
 contains
   DataSetUtils in '..\..\src\DataSetUtils.pas',
